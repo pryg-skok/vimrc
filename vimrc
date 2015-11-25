@@ -636,9 +636,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " ctrlp
     let g:ctrlp_match_window = 'order:ttb,max:20'
-
-" Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+    " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+" TagBar autofocus when open
+    let g:tagbar_autofocus = 1
 
 " vim latex
     let g:tex_flavor='latex'
