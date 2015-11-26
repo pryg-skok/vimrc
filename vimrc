@@ -87,7 +87,7 @@ call plug#begin('$HOME/.vim/plugged')
 
 " Other
     Plug 'https://github.com/blindFS/vim-taskwarrior', {'on': 'TW'}
-    Plug 'vimwiki/vimwiki', {'on': 'VimwikiIndex'}
+    Plug 'vimwiki/vimwiki'
 
 call plug#end()
 
@@ -180,8 +180,8 @@ filetype plugin indent on
     set hidden
     " faster redraw screen
     set ttyfast                     " better screen redraw
-    set lazyredraw                  " only redraws if it is needed
-    set ttyscroll=3
+    set lazyredraw                  " buffer screen and redraw it only if it is needed
+    set ttyscroll=0
     set synmaxcol=150
     set regexpengine=1
     set norelativenumber
@@ -285,7 +285,6 @@ let mapleader = ","
     nnoremap <leader>a :Ag<space>
     map <Leader>f :execute "Ag " . expand("<cword>") <Bar> cw<CR>
 
-
 " ,s
     " Shortcut for :%s//
     nnoremap <leader>s :%s//<left>
@@ -298,15 +297,6 @@ let mapleader = ","
     map <leader>lp :lprev <cr>
 " ,lh hide errors
     map <leader>lh :SyntasticReset <cr>
-
-" Move lines
-    " Move one line
-    nmap <C-S-k> ddkP
-    nmap <C-S-j> ddp
-    " Move selected lines
-    " See http://www.vim.org/scripts/script.php?script_id=1590
-    vmap <C-S-k> xkP'[V']
-    vmap <C-S-j> xp'[V']
 
 " Y from cursor position to the end of line
     nnoremap Y y$
@@ -341,9 +331,6 @@ let mapleader = ","
     nmap <leader>v :tabedit $MYVIMRC<CR>
     :cabbrev e NERDTreeClose<CR>:e!
 
-" <Space> = <PageDown>
-    nmap <Space> <PageDown>
-
 " n и N
     " Search matches are always in center
     nmap n nzz
@@ -352,7 +339,6 @@ let mapleader = ","
     nmap # #zz
     nmap g* g*zz
     nmap g# g#zz
-
 
 " Navigate through wrapped lines
     noremap j gj
@@ -441,9 +427,7 @@ set clipboard=exclude:.*
 
 " Environment
 " Store lots of history entries: :cmdline and search patterns
-set history=1000
-"" Save file with root permissions
-"command! W exec 'w !sudo tee % > /dev/null' | e!
+set history=500
 
 " Load previous session
     " Only available when compiled with the +viminfo feature
