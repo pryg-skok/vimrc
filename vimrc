@@ -86,7 +86,6 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/ahw/vim-pbcopy'
 
 " Other
-    Plug 'https://github.com/blindFS/vim-taskwarrior', {'on': 'TW'}
     Plug 'vimwiki/vimwiki'
 
 call plug#end()
