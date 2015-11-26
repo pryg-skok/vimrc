@@ -61,6 +61,10 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/kchmck/vim-coffee-script.git'
     Plug 'https://github.com/walm/jshint.vim.git'
 
+" Python
+    Plug 'davidhalter/jedi-vim'
+    Plug 'https://github.com/hdima/python-syntax'
+
 " Syntax highlightnings other
     Plug 'https://github.com/jamestomasino/actionscript-vim-bundle.git'
     Plug 'https://github.com/godlygeek/tabular'  " MarkDown
@@ -68,9 +72,8 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/rust-lang/rust.vim'
     Plug 'https://github.com/cespare/vim-toml'  " Toml
     Plug 'https://github.com/mitsuhiko/vim-jinja.git'
-    Plug 'https://github.com/hdima/python-syntax'
-    Plug 'lervag/vimtex'
     Plug 'https://github.com/leshill/vim-json.git'
+    Plug 'lervag/vimtex'
 
 " Perform all your vim insert mode completions with Tab
     Plug 'https://github.com/ajh17/VimCompletesMe'
@@ -581,3 +584,6 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     " select only plugins that we need for faster processing
     let g:airline#extensions#disable_rtp_load = 1
     let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']
+" vim-jedi
+    let g:jedi#use_tabs_not_buffers = 1
+    let g:jedi#auto_initialization = 0
