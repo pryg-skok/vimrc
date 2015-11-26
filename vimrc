@@ -73,7 +73,7 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/leshill/vim-json.git'
 
 " Perform all your vim insert mode completions with Tab
-    Plug 'https://github.com/ervandew/supertab.git'
+    Plug 'https://github.com/ajh17/VimCompletesMe'
 
 " Syntax check
     Plug 'scrooloose/Syntastic'
@@ -187,10 +187,6 @@ filetype plugin indent on
     set norelativenumber
     syntax sync minlines=256
 
-augroup resCur
-  autocmd!
-  autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
 
 " No beeps, no flashes
 set visualbell
