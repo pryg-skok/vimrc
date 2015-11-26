@@ -16,7 +16,6 @@ call plug#begin('$HOME/.vim/plugged')
 " Add or remove your Bundles here (use single quotes!):
 " Interface
     Plug 'https://github.com/tpope/vim-sensible' " default good settings for vim
-    Plug 'https://github.com/kien/ctrlp.vim.git' " find file
     Plug 'https://github.com/bling/vim-airline'  " smart status line
     Plug 'https://github.com/majutsushi/tagbar'  " navigate tags
 
@@ -88,6 +87,7 @@ call plug#begin('$HOME/.vim/plugged')
 
 " Other
     Plug 'https://github.com/blindFS/vim-taskwarrior', {'on': 'TW'}
+    Plug 'vimwiki/vimwiki', {'on': 'VimwikiIndex'}
 
 call plug#end()
 
@@ -161,18 +161,9 @@ filetype plugin indent on
     set tabstop=4
     " Number of spaces that a tab counts for while performing editing operations
     set softtabstop=4
-    " Number of pixel lines inserted between characters
-    " Only in GUI
-    set linespace=1
     " Highlight the screen line of the cursor
     " Only available when compiled with the +syntax feature
     set cursorline
-    " Turn off cursor blinking in normal mode
-    " Only available when compiled with GUI enabled
-    set guicursor=n:blinkon0
-    " Remove all components and options of the GUI
-    " Only available when compiled with GUI enabled
-    set guioptions=
     " Number of colors
     set t_Co=256
     " Splitting a window will put the new window below the current one
@@ -185,18 +176,21 @@ filetype plugin indent on
     set splitright
     " Don't show the intro message starting Vim
     set shortmess+=I
-    " Turn mouse pointer to a up-down sizing arrow
-    " Only available when compiled with the +mouseshape feature
-    set mouseshape=s:udsizing,m:no
-    " Hide the mouse when typing text
-    " Only works in GUI
-    set mousehide
     " Edit several files in the same time without having to save them
     set hidden
-
+    " faster redraw screen
     set ttyfast                     " better screen redraw
     set lazyredraw                  " only redraws if it is needed
+    set ttyscroll=3
+    set synmaxcol=150
+    set regexpengine=1
+    set norelativenumber
+    syntax sync minlines=256
 
+augroup resCur
+  autocmd!
+  autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
 
 " No beeps, no flashes
 set visualbell
@@ -209,48 +203,12 @@ set t_vb=
 set path=.,,**
 
 
-" Status line
-    " Content of the status line
-    " Only available when compiled with the +statusline feature
-    set statusline=\
-    " Buffer number
-    set statusline+=%n:\
-    " File name
-    set statusline+=%t
-    " Modified flag
-    set statusline+=%m
-    set statusline+=\ \
-    " Paste mode flag
-    set statusline+=%{&paste?'[paste]\ ':''}
-    " File encoding
-    set statusline+=%{&fileencoding}
-    " Type of file
-    " Only available when compiled with the +autocmd feature
-    set statusline+=\ \ %Y
-    " Column number
-    set statusline+=\ %3.3(%c%)
-    " Current line / number of lines in buffer
-    set statusline+=\ \ %3.9(%l/%L%)
-    " Percentage through file in lines
-    " set statusline+=\ \ %2.3p%%
-    " File size
-    set statusline+=\ \ %{functions#FileSize()}
-    " Truncate here if line is too long
-    set statusline+=%<
-    " Path to the file
-    set statusline+=\ \ CurDir:%{functions#CurDir()}
-
-
-augroup EditVim
-  autocmd!
-  autocmd BufWritePost .vimrc source $MYVIMRC
-augroup END
-
 " Create encodings menu
 menu Encoding.UTF-8 :e ++enc=utf8 <CR>
 menu Encoding.Windows-1251 :e ++enc=cp1251<CR>
 menu Encoding.koi8-r :e ++enc=koi8-r<CR>
 menu Encoding.cp866 :e ++enc=cp866<CR>
+
 
 " Spell checking
 if version >= 700
@@ -271,9 +229,7 @@ endif
 " za = toggle current fold
 " zR = open all folds
 " zM = close all folds
-"set foldmethod=indent
 set foldtext=functions#MyFoldText()
-" Lines with equal indent form a fold
 "
 " http://stackoverflow.com/a/4277400/1588044
 set foldmethod=manual
@@ -520,7 +476,7 @@ set history=1000
 " See http://vimcasts.org/episodes/updating-your-vimrc-file-on-the-fly/
 " Source the vimrc file after saving it
 if has("autocmd")
-    autocmd! bufwritepost .vimrc source $MYVIMRC
+    autocmd! BufWritePost .vimrc source $MYVIMRC
 endif
 
 " Go to last file(s) if invoked without arguments
@@ -534,10 +490,6 @@ endif
 
 " Auto change the directory to the current file I'm working on
 autocmd BufEnter * lcd %:p:h
-
-" Save on losing focus
-" Only available for GUI
-autocmd FocusLost * :wa
 
 " Resize splits when the window is resized
 " Only available for GUI
@@ -556,14 +508,11 @@ else
 endif
 
 " File specific
-autocmd BufNewFile *.py 0r ~/.vimi/templates/template.py
-autocmd BufNewFile *.go 0r ~/.vimi/templates/template.go
-autocmd BufNewFile *.c 0r ~/.vimi/templates/template.c
-autocmd BufNewFile *.cpp 0r ~/.vimi/templates/template.cpp
-autocmd BufNewFile *.xml 0r ~/.vimi/templates/template.xml
-autocmd BufNewFile *.xsl 0r ~/.vimi/templates/template.xsl
-autocmd BufNewFile *.jade 0r ~/.vimi/templates/template.jade
-autocmd BufNewFile *.html 0r ~/.vimi/templates/template.html
+autocmd BufNewFile *.py 0r $HOME/.vim/templates/template.py
+autocmd BufNewFile *.go 0r $HOME/.vim/templates/template.go
+autocmd BufNewFile *.c 0r $HOME/.vim/templates/template.c
+autocmd BufNewFile *.cpp 0r $HOME/.vim/templates/template.cpp
+autocmd BufNewFile *.html 0r $HOME/.vim/templates/template.html
 
 autocmd FileType jade setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType go setlocal tabstop=4 shiftwidth=4 expandtab textwidth=100 colorcolumn=100
@@ -587,7 +536,6 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
         "let g:solarized_contrast="high"
         "let g:solarized_visibility="low"
 
-
      "Solarized dark mode
         set background=dark
         let g:solarized_termtrans=1
@@ -597,6 +545,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     catch /^Vim\%((\a\+)\)\=:E185/
         echo "Solarized theme not found. Run :PlugInstall"
     endtry
+
 
 " NERDTree
     nmap <Bs> :NERDTreeToggle<CR>
@@ -628,16 +577,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     \ --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330"
     set completeopt-=preview
 
-" git gutter
+" gitgutter
     let g:gitgutter_max_signs = 1000
     let g:gitgutter_enabled = 0
     let g:gitgutter_realtime = 0
     let g:gitgutter_eager = 0
-
-" ctrlp
-    let g:ctrlp_match_window = 'order:ttb,max:20'
-    " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
 " TagBar autofocus when open
     let g:tagbar_autofocus = 1
@@ -645,3 +589,16 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " vim latex
     let g:tex_flavor='latex'
 
+" Airline (unicode symbols without font patching)
+    if !exists('g:airline_symbols')
+        let g:airline_symbols = {}
+    endif
+    let g:airline_left_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_symbols.linenr = ''
+    let g:airline_symbols.branch = '⎇ '
+    let g:airline_symbols.paste = 'PASTE'
+    let g:airline_symbols.whitespace = '✗'
+    " select only plugins that we need for faster processing
+    let g:airline#extensions#disable_rtp_load = 1
+    let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']

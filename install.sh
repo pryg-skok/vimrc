@@ -6,6 +6,7 @@ ln -s $(pwd)/tmux.conf $HOME/.tmux.conf
 mkdir -p "$HOME/.vim"
 ln -s $(pwd)/NERDTreeBookmarks $HOME/.vim/.NERDTreeBookmarks
 ln -s $(pwd)/functions.vim $HOME/.vim/autoload/functions.vim
+ln -s $(pwd)/templates $HOME/.vim/templates
 
 
 # vim-plug install
