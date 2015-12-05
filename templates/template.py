@@ -12,13 +12,13 @@ log = logging.getLogger(__name__)
 def setup_logger(stdout=True, level=logging.INFO):
     log.setLevel(level)
     if stdout:
-        messagefmt=u"[%(levelname)s] %(message)s"
+        msgfmt = u"[%(levelname)s] %(message)s"
         handler = logging.StreamHandler()
     else:  # syslog handler
-        messagefmt=u"%(module)s %(asctime)s [%(levelname)s] %(message)s"
+        msgfmt = u"%(module)s %(asctime)s [%(levelname)s] %(message)s"
         handler = logging.handlers.SysLogHandler("/dev/log")
-    datefmt="%Y-%m-%d %I:%M:%S"
-    formatter = logging.Formatter(messagefmt, datefmt)
+    datefmt = "%Y-%m-%d %I:%M:%S"
+    formatter = logging.Formatter(msgfmt, datefmt)
     handler.setFormatter(formatter)
     handler.setLevel(level)
     log.addHandler(handler)

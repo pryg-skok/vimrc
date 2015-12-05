@@ -184,7 +184,7 @@ filetype plugin indent on
     set ttyfast                     " better screen redraw
     set lazyredraw                  " buffer screen and redraw it only if it is needed
     set ttyscroll=0
-    set synmaxcol=150
+    set synmaxcol=300
     set regexpengine=1
     set norelativenumber
     syntax sync minlines=256
@@ -586,4 +586,3 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']
 " vim-jedi
     let g:jedi#use_tabs_not_buffers = 1
-    let g:jedi#auto_initialization = 0
