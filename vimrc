@@ -505,6 +505,8 @@ autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
 " md is markdown
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 
+au FileType go nmap <Leader>d <Plug>(go-def)
+
 
 " Plugins
 
@@ -512,11 +514,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     " http://stackoverflow.com/questions/7278267/incorrect-colors-with-vim-in-iterm2-using-solarized#comment11144700_7278548
     let g:solarized_termcolors=256
      ""Solarized light mode
-        "set background=light
-        "let g:solarized_termtrans=0
+        " set background=light
+        " let g:solarized_termtrans=0
 
-        "let g:solarized_contrast="high"
-        "let g:solarized_visibility="low"
+        " let g:solarized_contrast="high"
+        " let g:solarized_visibility="low"
 
      "Solarized dark mode
         set background=dark
@@ -586,3 +588,13 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']
 " vim-jedi
     let g:jedi#use_tabs_not_buffers = 1
+
+" Vim-Go
+    let g:go_fmt_fail_silently = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_structs = 0
+    au FileType go nmap <Leader>d <Plug>(go-def)
+
+" VimCompletesMe
+    autocmd FileType go let b:vcm_tab_complete = "omni"
