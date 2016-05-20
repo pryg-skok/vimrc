@@ -64,6 +64,8 @@ call plug#begin('$HOME/.vim/plugged')
 " Python
     Plug 'davidhalter/jedi-vim'
     Plug 'https://github.com/hdima/python-syntax'
+    Plug 'https://github.com/mitsuhiko/vim-jinja.git'
+    Plug 'mitsuhiko/vim-python-combined'
 
 " Syntax highlightnings other
     Plug 'https://github.com/jamestomasino/actionscript-vim-bundle.git'
@@ -71,7 +73,6 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/fatih/vim-go'
     Plug 'https://github.com/rust-lang/rust.vim'
     Plug 'https://github.com/cespare/vim-toml'  " Toml
-    Plug 'https://github.com/mitsuhiko/vim-jinja.git'
     Plug 'https://github.com/leshill/vim-json.git'
     Plug 'lervag/vimtex'
 
@@ -90,6 +91,8 @@ call plug#begin('$HOME/.vim/plugged')
 
 " Other
     Plug 'vimwiki/vimwiki'
+    Plug 'mbbill/undotree'
+    Plug 'easymotion/vim-easymotion'
 
 call plug#end()
 
@@ -367,17 +370,21 @@ let mapleader = ","
     " Fix trailing white space
     map <leader>ts :%s/\s\+$//e<CR>
 
-" ,bl
-    " Show buffers
-    nmap <Leader>bl :ls<cr>:b
-
-" ,bp
-    " Go to prev buffer
-    nmap <Leader>bp :bp<cr>
-
-" ,bn
-    " Go to next buffer
-    nmap <Leader>bn :bn<cr>
+" Mappings to access buffers
+    " ,l       : list buffers
+    " ,b ,f ,g : go back/forward/last-used
+    " ,1 ,2 ,3 : go to buffer 1/2/3 etc
+    nnoremap <Leader>l :ls<CR>
+    nnoremap <Leader>1 :1b<CR>
+    nnoremap <Leader>2 :2b<CR>
+    nnoremap <Leader>3 :3b<CR>
+    nnoremap <Leader>4 :4b<CR>
+    nnoremap <Leader>5 :5b<CR>
+    nnoremap <Leader>6 :6b<CR>
+    nnoremap <Leader>7 :7b<CR>
+    nnoremap <Leader>8 :8b<CR>
+    nnoremap <Leader>9 :9b<CR>
+    nnoremap <Leader>0 :10b<CR>
 
 " ,u
     " Change case to uppercase
@@ -441,9 +448,7 @@ set history=500
     set viminfo^=%
 
 " Backup, swp files
-    " Don't create backups
     set backup
-    " Don't create swap files
     set backupdir=$HOME/.vim/tmp/backup/
     set undodir=$HOME/.vim/tmp/undo/
     set directory=$HOME/.vim/tmp/swap/
@@ -499,13 +504,13 @@ autocmd BufNewFile *.html 0r $HOME/.vim/templates/template.html
 autocmd FileType jade setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType go setlocal tabstop=4 shiftwidth=4 expandtab textwidth=100 colorcolumn=100
 
+au FileType go nmap <Leader>d <Plug>(go-def)
+
 " fdoc is yaml
 autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
 
 " md is markdown
 autocmd BufRead,BufNewFile *.md set filetype=markdown
-
-au FileType go nmap <Leader>d <Plug>(go-def)
 
 
 " Plugins
@@ -516,7 +521,6 @@ au FileType go nmap <Leader>d <Plug>(go-def)
      ""Solarized light mode
         " set background=light
         " let g:solarized_termtrans=0
-
         " let g:solarized_contrast="high"
         " let g:solarized_visibility="low"
 
@@ -555,11 +559,16 @@ au FileType go nmap <Leader>d <Plug>(go-def)
     let g:syntastic_check_on_wq = 0
     let g:syntastic_python_checkers=['flake8', 'pylint']
     let g:syntastic_python_flake8_args="--max-line-length=120 --max-complexity 12
-    \ --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125"
+    \ --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202"
 
     let g:syntastic_python_pylint_args="--max-line-length=120
-    \ --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330"
+    \ --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330"
     set completeopt-=preview
+
+    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+    let g:go_list_type = "quickfix"
+
 
 " gitgutter
     let g:gitgutter_max_signs = 1000
@@ -586,15 +595,18 @@ au FileType go nmap <Leader>d <Plug>(go-def)
     " select only plugins that we need for faster processing
     let g:airline#extensions#disable_rtp_load = 1
     let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']
+
 " vim-jedi
     let g:jedi#use_tabs_not_buffers = 1
 
 " Vim-Go
-    let g:go_fmt_fail_silently = 1
+    " let g:go_fmt_fail_silently = 1
     let g:go_highlight_functions = 1
     let g:go_highlight_methods = 1
     let g:go_highlight_structs = 0
-    au FileType go nmap <Leader>d <Plug>(go-def)
+    let g:go_highlight_interfaces = 1
+    let g:go_highlight_build_constraints = 1
+    let g:go_fmt_command = "goimports"
 
 " VimCompletesMe
     autocmd FileType go let b:vcm_tab_complete = "omni"
