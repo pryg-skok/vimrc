@@ -266,7 +266,6 @@ let mapleader = ","
 " ,r
     map <Leader>r :call functions#Replace()<CR>
 
-
 " <Esc><Esc>
     " Clear the search highlight in Normal mode
     nnoremap <silent> <Esc><Esc> :nohlsearch<CR><Esc>
@@ -307,8 +306,8 @@ let mapleader = ","
     nnoremap Y y$
 
 " Pasting with correct indention
-    nmap p p=`]
-    nmap P P=`[
+    " nmap p p=`]
+    " nmap P P=`[
 
 " TagBar ctrl-] (as ctags but I don't use it)
     nnoremap <C-]> :TagbarToggle<CR>
@@ -607,6 +606,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:go_highlight_interfaces = 1
     let g:go_highlight_build_constraints = 1
     let g:go_fmt_command = "goimports"
+    let g:go_def_mode = "godef"
 
 " VimCompletesMe
     autocmd FileType go let b:vcm_tab_complete = "omni"
