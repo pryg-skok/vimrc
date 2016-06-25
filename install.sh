@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mkdir -p "$HOME/.vim"
-mkdir -p "$HOME/.vim/{autoload,tmp}"
-mkdir -p "$HOME/.vim/tmp/{undo,backup,swap}"
+mkdir -p $HOME/.vim
+mkdir -p $HOME/.vim/{autoload,tmp}
+mkdir -p $HOME/.vim/tmp/{undo,backup,swap}
 ln -s $(pwd)/vimrc $HOME/.vimrc
 ln -s $(pwd)/tmux.conf $HOME/.tmux.conf
 ln -s $(pwd)/NERDTreeBookmarks $HOME/.vim/.NERDTreeBookmarks

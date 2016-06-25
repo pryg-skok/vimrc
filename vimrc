@@ -192,6 +192,8 @@ filetype plugin indent on
     set norelativenumber
     syntax sync minlines=256
 
+    set autochdir
+
 
 " No beeps, no flashes
 set visualbell
@@ -314,9 +316,6 @@ let mapleader = ","
 
 " ,g
     nnoremap <leader>g :GitGutterToggle<CR>
-
-" task warrior
-    nnoremap <leader>t :TW<CR>
 
 " Navigate with <Ctrl>-hjkl in Insert mode
     imap <C-h> <C-o>h
@@ -610,3 +609,6 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " VimCompletesMe
     autocmd FileType go let b:vcm_tab_complete = "omni"
+
+" remote pbcopy
+    let g:vim_pbcopy_remote_cmd = "ssh fresh@10.211.55.2 pbcopy"
