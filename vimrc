@@ -389,6 +389,11 @@ let mapleader = ","
     nnoremap <Leader>u gUiw
     inoremap <Leader>u <esc>gUiwea
 
+" ,uu
+    " Change case to lowercase
+    nnoremap <Leader>uu guiw
+    inoremap <Leader>uu <esc>guiwea
+
 " В коммандном режиме разрешить прыгать в конец и начало строки, как в консоли
     cnoremap <c-e> <end>
     imap     <c-e> <c-o>$
