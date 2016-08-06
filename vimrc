@@ -62,7 +62,7 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/walm/jshint.vim.git'
 
 " Python
-    Plug 'davidhalter/jedi-vim'
+    Plug 'pryg-skok/jedi-vim', {'on': '<Plug>(jedi-goto)'}
     Plug 'https://github.com/hdima/python-syntax'
     Plug 'https://github.com/mitsuhiko/vim-jinja.git'
     Plug 'mitsuhiko/vim-python-combined'
@@ -70,7 +70,7 @@ call plug#begin('$HOME/.vim/plugged')
 " Syntax highlightnings other
     Plug 'https://github.com/jamestomasino/actionscript-vim-bundle.git'
     Plug 'https://github.com/godlygeek/tabular'  " MarkDown
-    Plug 'https://github.com/fatih/vim-go'
+    Plug 'https://github.com/fatih/vim-go', {'do': ':GoInstallBinaries'}
     Plug 'https://github.com/rust-lang/rust.vim'
     Plug 'https://github.com/cespare/vim-toml'  " Toml
     Plug 'https://github.com/leshill/vim-json.git'
@@ -90,9 +90,11 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/ahw/vim-pbcopy'
 
 " Other
-    Plug 'vimwiki/vimwiki'
     Plug 'mbbill/undotree'
     Plug 'easymotion/vim-easymotion'
+
+" time management
+    Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 
@@ -260,7 +262,6 @@ set fillchars="fold: "
     " All matches in a line are substituted instead of one
     set gdefault
     set sc
-
 
 " keyboard shortcuts
 let mapleader = ","
@@ -469,6 +470,7 @@ if has("autocmd")
     autocmd! BufWritePost .vimrc source $MYVIMRC
 endif
 
+
 " Go to last file(s) if invoked without arguments
      "http://vimcastsim.wikia.com/wiki/Open_the_last_edited_file
      autocmd VimLeave * nested if (!isdirectory($HOME . "/.vim")) |
@@ -508,6 +510,7 @@ autocmd FileType jade setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType go setlocal tabstop=4 shiftwidth=4 expandtab textwidth=100 colorcolumn=100
 
 au FileType go nmap <Leader>d <Plug>(go-def)
+" au FileType python nmap <Leader>d <Plug>(jedi-goto)
 
 " fdoc is yaml
 autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
@@ -562,7 +565,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:syntastic_check_on_wq = 0
     let g:syntastic_python_checkers=['flake8', 'pylint']
     let g:syntastic_python_flake8_args="--max-line-length=120 --max-complexity 12
-    \ --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202"
+    \ --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202,F405,F403"
 
     let g:syntastic_python_pylint_args="--max-line-length=120
     \ --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330"
@@ -601,9 +604,9 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " vim-jedi
     let g:jedi#use_tabs_not_buffers = 1
+    let g:jedi#auto_vim_configuration = 0
 
 " Vim-Go
-    " let g:go_fmt_fail_silently = 1
     let g:go_highlight_functions = 1
     let g:go_highlight_methods = 1
     let g:go_highlight_structs = 0
@@ -611,6 +614,13 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:go_highlight_build_constraints = 1
     let g:go_fmt_command = "goimports"
     let g:go_def_mode = "godef"
+    let g:go_fmt_fail_silently = 1
+    let g:go_fmt_autosave = 0
+
+    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
+    let g:go_list_type = "quickfix"
+
 
 " VimCompletesMe
     autocmd FileType go let b:vcm_tab_complete = "omni"
