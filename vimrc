@@ -4,7 +4,7 @@ if 0 | endif
 
 if has('vim_starting')
   if &compatible
-    set nocompatible               " Be iMproved
+    set nocompatible
   endif
 endif
 
@@ -16,11 +16,13 @@ call plug#begin('$HOME/.vim/plugged')
 " Add or remove your Bundles here (use single quotes!):
 " Interface
     Plug 'https://github.com/tpope/vim-sensible' " default good settings for vim
-    Plug 'https://github.com/bling/vim-airline'  " smart status line
-    Plug 'https://github.com/majutsushi/tagbar'  " navigate tags
+    Plug 'itchyny/lightline.vim'
 
-    " Solarized Colorscheme
-    Plug 'https://github.com/altercation/vim-colors-solarized.git'
+" Navigate through functions, methods, etc
+    Plug 'https://github.com/majutsushi/tagbar', {'on': 'TagbarToggle'}
+
+    " Gruvbox Colorscheme
+    Plug 'kunev/gruvbox'
 
     " A tree explorer plugin
     Plug 'https://github.com/scrooloose/nerdtree.git', { 'on': 'NERDTreeToggle' }
@@ -62,17 +64,19 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/walm/jshint.vim.git'
 
 " Python
-    Plug 'pryg-skok/jedi-vim', {'on': '<Plug>(jedi-goto)'}
+    Plug 'pryg-skok/jedi-vim'
     Plug 'https://github.com/hdima/python-syntax'
     Plug 'https://github.com/mitsuhiko/vim-jinja.git'
     Plug 'mitsuhiko/vim-python-combined'
 
+" Golang
+    Plug 'https://github.com/fatih/vim-go', {'do': ':GoInstallBinaries'}
+
 " Syntax highlightnings other
     Plug 'https://github.com/jamestomasino/actionscript-vim-bundle.git'
-    Plug 'https://github.com/godlygeek/tabular'  " MarkDown
-    Plug 'https://github.com/fatih/vim-go', {'do': ':GoInstallBinaries'}
+    Plug 'https://github.com/godlygeek/tabular'
     Plug 'https://github.com/rust-lang/rust.vim'
-    Plug 'https://github.com/cespare/vim-toml'  " Toml
+    Plug 'https://github.com/cespare/vim-toml'
     Plug 'https://github.com/leshill/vim-json.git'
     Plug 'lervag/vimtex'
 
@@ -83,22 +87,31 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'scrooloose/Syntastic'
 
 " Git diff quickly
-    Plug 'https://github.com/airblade/vim-gitgutter'
+    Plug 'https://github.com/airblade/vim-gitgutter', {'on': 'GitGutterToggle'}
     Plug 'https://github.com/tpope/vim-fugitive'
 
 " yanc selection to clipboard
     Plug 'https://github.com/ahw/vim-pbcopy'
 
-" Other
-    Plug 'mbbill/undotree'
-    Plug 'easymotion/vim-easymotion'
+    Plug 'kshenoy/vim-signature'
 
-" time management
-    Plug 'wakatime/vim-wakatime'
+" Other
+    Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
+    Plug 'easymotion/vim-easymotion'
+    if has('nvim') && has('python3')
+        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    endif
+
+    " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'on': ['YcmCompleter'] }
 
 call plug#end()
 
 filetype plugin indent on
+
+if !has('nvim')
+    set ttymouse=xterm2
+endif
+
 
 " Dropped many options already specified inn vim-sensible
 " Interface
@@ -188,7 +201,9 @@ filetype plugin indent on
     " faster redraw screen
     set ttyfast                     " better screen redraw
     set lazyredraw                  " buffer screen and redraw it only if it is needed
-    set ttyscroll=0
+    if !has('nvim')
+        set ttyscroll=0
+    endif
     set synmaxcol=300
     set regexpengine=1
     set norelativenumber
@@ -297,25 +312,16 @@ let mapleader = ","
     nnoremap <leader>s :%s//<left>
     vnoremap <leader>s :s//<left>
 
-" Syntastic
-" ,ll next error
-    map <leader>ll :lnext <cr>
-" ,lp previous error
-    map <leader>lp :lprev <cr>
-" ,lh hide errors
-    map <leader>lh :SyntasticReset <cr>
-
 " Y from cursor position to the end of line
     nnoremap Y y$
-
-" Pasting with correct indention
-    " nmap p p=`]
-    " nmap P P=`[
 
 " TagBar ctrl-] (as ctags but I don't use it)
     nnoremap <C-]> :TagbarToggle<CR>
 
-" ,g
+" UndoTree ,t
+    nnoremap <leader>t :UndotreeToggle<CR>
+
+" GitGutter ,g
     nnoremap <leader>g :GitGutterToggle<CR>
 
 " Navigate with <Ctrl>-hjkl in Insert mode
@@ -413,10 +419,6 @@ let mapleader = ","
     " Edit another file in the same directory with the current one
     map <Leader>n :vnew <C-R>=expand("%:p:h") . '/'<CR>
 
-" ,d
-" insert date
-    map <Leader>d :r !date<CR>
-
 " Bind :Q to :q
     command! Q q
 
@@ -435,7 +437,9 @@ let mapleader = ","
 
 " stop trying to connect to X-server
 " http://stackoverflow.com/a/17719528/1588044
-set clipboard=exclude:.*
+if !has('nvim')
+    set clipboard=exclude:.*
+endif
 
 
 " Environment
@@ -444,7 +448,12 @@ set history=500
 
 " Load previous session
     " Only available when compiled with the +viminfo feature
-    set viminfo='10,<100000,s5000,:20,%,n$HOME/.vim/tmp/viminfo
+    "
+    if !has('nvim')
+        set viminfo='10,<100000,s5000,:20,%,n$HOME/.vim/tmp/viminfo
+    else
+        set viminfo='10,<100000,s5000,:20,%,n$HOME/.vim/tmp/nviminfo
+    endif
 
     " Set cursor to its last position
      au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
@@ -477,8 +486,13 @@ endif
          \ call mkdir($HOME . "/.vim") |
          \ endif |
          \ execute "mksession! " . $HOME . "/.vim/Session.vim"
-     autocmd VimEnter * nested if argc() == 0 && filereadable($HOME . "/.vim/Session.vim") |
-         \ execute "source " . $HOME . "/.vim/Session.vim"
+        if !has('nvim')
+            autocmd VimEnter * nested if argc() == 0 && filereadable($HOME . "/.vim/Session.vim") |
+            \ execute "source " . $HOME . "/.vim/Session.vim"
+        else
+            autocmd VimEnter * nested if argc() == 0 && filereadable($HOME . "/.vim/Session.nvim") |
+            \ execute "source " . $HOME . "/.vim/Session.nvim"
+        endif
 
 " Auto change the directory to the current file I'm working on
 autocmd BufEnter * lcd %:p:h
@@ -489,15 +503,6 @@ au VimResized * exe "normal! \<c-w>="
 
 " automatically rebalance windows on vim resize
 autocmd VimResized * :wincmd =
-
-" Fix Cursor in TMUX
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
 
 " File specific
 autocmd BufNewFile *.py 0r $HOME/.vim/templates/template.py
@@ -510,7 +515,6 @@ autocmd FileType jade setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType go setlocal tabstop=4 shiftwidth=4 expandtab textwidth=100 colorcolumn=100
 
 au FileType go nmap <Leader>d <Plug>(go-def)
-" au FileType python nmap <Leader>d <Plug>(jedi-goto)
 
 " fdoc is yaml
 autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
@@ -521,23 +525,15 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " Plugins
 
-" Solarized
-    " http://stackoverflow.com/questions/7278267/incorrect-colors-with-vim-in-iterm2-using-solarized#comment11144700_7278548
-    let g:solarized_termcolors=256
-     ""Solarized light mode
-        " set background=light
-        " let g:solarized_termtrans=0
-        " let g:solarized_contrast="high"
-        " let g:solarized_visibility="low"
-
-     "Solarized dark mode
-        set background=dark
-        let g:solarized_termtrans=1
+" Colorscheme
+    set background=dark
+    let g:gruvbox_contrast_dark="hard"
+    let g:gruvbox_contrast_light="hard"
 
     try
-        colorscheme solarized
+        colorscheme gruvbox
     catch /^Vim\%((\a\+)\)\=:E185/
-        echo "Solarized theme not found. Run :PlugInstall"
+        echo "Gruvbox theme not found. Run :PlugInstall"
     endtry
 
 
@@ -588,21 +584,22 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " vim latex
     let g:tex_flavor='latex'
 
-" Airline (unicode symbols without font patching)
-    if !exists('g:airline_symbols')
-        let g:airline_symbols = {}
-    endif
-    let g:airline_left_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_symbols.linenr = ''
-    let g:airline_symbols.branch = '⎇ '
-    let g:airline_symbols.paste = 'PASTE'
-    let g:airline_symbols.whitespace = '✗'
-    " select only plugins that we need for faster processing
-    let g:airline#extensions#disable_rtp_load = 1
-    let g:airline_extensions = ['tabline', 'hunks', 'tagbar', 'syntastic', 'wordcount', 'whitespace']
+"LightLine
+    let g:lightline = {
+      \ 'active': {
+      \   'left': [ ['mode', 'paste'], ['fugitive', 'filename'] ]
+      \ },
+      \ 'component_function': {
+      \   'fugitive': 'LightlineFugitive',
+      \   'readonly': 'LightlineReadonly',
+      \   'modified': 'LightlineModified',
+      \   'filename': 'LightlineFilename'
+      \ },
+      \ }
+
 
 " vim-jedi
+    let g:jedi#auto_initialization = 1
     let g:jedi#use_tabs_not_buffers = 1
     let g:jedi#auto_vim_configuration = 0
 
@@ -613,9 +610,8 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:go_highlight_interfaces = 1
     let g:go_highlight_build_constraints = 1
     let g:go_fmt_command = "goimports"
-    let g:go_def_mode = "godef"
     let g:go_fmt_fail_silently = 1
-    let g:go_fmt_autosave = 0
+    let g:go_fmt_autosave = 1
 
     let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
     let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
@@ -627,3 +623,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " remote pbcopy
     let g:vim_pbcopy_remote_cmd = "ssh fresh@10.211.55.2 pbcopy"
+
+" vimtex
+    let g:vimtex_latexmk_enabled = 0
+
+    if has('nvim') && has('python3')
+        let g:deoplete#enable_at_startup = 1
+    endif
+
