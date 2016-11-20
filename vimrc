@@ -584,10 +584,18 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " vim latex
     let g:tex_flavor='latex'
 
+" source lightline functions when we need them
+    let g:vimrc_path = fnamemodify(resolve(expand("$MYVIMRC")), ':p:h')
+    execute 'source ' . g:vimrc_path . "/lightline.vim"
+
 "LightLine
     let g:lightline = {
       \ 'active': {
-      \   'left': [ ['mode', 'paste'], ['fugitive', 'filename'] ]
+      \   'left': [ ['mode', 'paste'], ['fugitive', 'readonly', 'filename', 'modified'] ],
+      \   'right': [
+      \       ['syntastic', 'lineinfo'],
+      \       ['percent'], ['fileencoding', 'filetype']
+      \   ]
       \ },
       \ 'component_function': {
       \   'fugitive': 'LightlineFugitive',
@@ -595,8 +603,15 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
       \   'modified': 'LightlineModified',
       \   'filename': 'LightlineFilename'
       \ },
+      \ 'component_expand': {
+      \   'syntastic': 'SyntasticStatuslineFlag',
+      \ },
+      \ 'component_type': {
+      \   'syntastic': 'error',
+      \ },
       \ }
 
+    let g:tagbar_status_func = 'TagbarStatusFunc'
 
 " vim-jedi
     let g:jedi#auto_initialization = 1
