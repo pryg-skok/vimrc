@@ -84,7 +84,8 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/ajh17/VimCompletesMe'
 
 " Syntax check
-    Plug 'scrooloose/Syntastic'
+    "Plug 'scrooloose/Syntastic'
+    Plug 'neomake/neomake'
 
 " Git diff quickly
     Plug 'https://github.com/airblade/vim-gitgutter', {'on': 'GitGutterToggle'}
@@ -555,22 +556,37 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " Python Syntax
     let python_highlight_all = 1
 
-" Syntastic
-    let g:syntastic_enable_highlighting = 1
-    let g:syntastic_aggregate_errors = 1
-    let g:syntastic_check_on_wq = 0
-    let g:syntastic_python_checkers=['flake8', 'pylint']
-    let g:syntastic_python_flake8_args="--max-line-length=120 --max-complexity 12
-    \ --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202,F405,F403"
+" Neomake
+    let g:neomake_warning_sign = {'text': 'W>', 'texthl': 'WarnMsg'}
+    let g:neomake_error_sign = {'text': 'E>', 'texthl': 'ErrorMsg'}
+    let g:neomake_info_sign = {'text': 'I>', 'texthl': 'InfoMsg'}
 
-    let g:syntastic_python_pylint_args="--max-line-length=120
-    \ --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330"
+    " let g:neomake_verbose = 1
+    " let g:neomake_logfile=$HOME . '/neomake.log'
+
+    let g:neomake_python_enabled_makers = ['pylint', 'flake8', 'vulture']
+    let g:neomake_python_pylint_maker = {
+      \ 'args': [
+      \    '--output-format=text',
+      \    '--msg-template="{path}:{line}:{column}:{C}: [{symbol}] {msg}"',
+      \    '--reports=no',
+      \    '--disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330,E270'
+      \ ],
+      \ 'errorformat': neomake#makers#ft#python#pylint()['errorformat'],
+      \ 'postprocess': function('neomake#makers#ft#python#PylintEntryProcess')
+      \ }
+
+    let g:neomake_python_flake8_maker = {
+      \ 'args': [
+      \    '--max-line-length=120',
+      \    '--max-complexity=12',
+      \    '--ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202,F405,F403'
+      \ ],
+      \ 'errorformat': neomake#makers#ft#python#flake8()['errorformat'],
+      \ 'postprocess': function('neomake#makers#ft#python#Flake8EntryProcess')
+      \ }
+
     set completeopt-=preview
-
-    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
-    let g:go_list_type = "quickfix"
-
 
 " gitgutter
     let g:gitgutter_max_signs = 1000
@@ -580,6 +596,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " TagBar autofocus when open
     let g:tagbar_autofocus = 1
+    let g:tagbar_sort = 0
 
 " vim latex
     let g:tex_flavor='latex'
@@ -591,9 +608,9 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 "LightLine
     let g:lightline = {
       \ 'active': {
-      \   'left': [ ['mode', 'paste'], ['fugitive', 'readonly', 'filename', 'modified'] ],
+      \   'left': [ ['mode', 'paste'], ['fugitive', 'readonly', 'filename'] ],
       \   'right': [
-      \       ['syntastic', 'lineinfo'],
+      \       ['neomake', 'lineinfo'],
       \       ['percent'], ['fileencoding', 'filetype']
       \   ]
       \ },
@@ -601,13 +618,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
       \   'fugitive': 'LightlineFugitive',
       \   'readonly': 'LightlineReadonly',
       \   'modified': 'LightlineModified',
-      \   'filename': 'LightlineFilename'
-      \ },
-      \ 'component_expand': {
-      \   'syntastic': 'SyntasticStatuslineFlag',
+      \   'filename': 'LightlineFilename',
+      \   'neomake': 'neomake#statusline#LoclistStatus'
       \ },
       \ 'component_type': {
-      \   'syntastic': 'error',
+      \   'neomake': 'error',
       \ },
       \ }
 
@@ -627,11 +642,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     let g:go_fmt_command = "goimports"
     let g:go_fmt_fail_silently = 1
     let g:go_fmt_autosave = 1
-
-    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
     let g:go_list_type = "quickfix"
-
 
 " VimCompletesMe
     autocmd FileType go let b:vcm_tab_complete = "omni"

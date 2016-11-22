@@ -65,12 +65,12 @@ function! LightlineMode()
 endfunction
 
 
-augroup AutoSyntastic
+augroup AutoNeomake
   autocmd!
-  autocmd BufWritePost *.py,*.go call s:syntastic()
+  autocmd BufWritePost *.py,*.go call s:neomake()
 augroup END
-function! s:syntastic()
-  SyntasticCheck
+function! s:neomake()
+  Neomake
   call lightline#update()
 endfunction
 
