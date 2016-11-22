@@ -564,13 +564,13 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     " let g:neomake_verbose = 1
     " let g:neomake_logfile=$HOME . '/neomake.log'
 
-    let g:neomake_python_enabled_makers = ['pylint', 'flake8', 'vulture']
+    let g:neomake_python_enabled_makers = ['pylint', 'flake8']
     let g:neomake_python_pylint_maker = {
       \ 'args': [
       \    '--output-format=text',
       \    '--msg-template="{path}:{line}:{column}:{C}: [{symbol}] {msg}"',
       \    '--reports=no',
-      \    '--disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330,E270'
+      \    '--disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330,E0237'
       \ ],
       \ 'errorformat': neomake#makers#ft#python#pylint()['errorformat'],
       \ 'postprocess': function('neomake#makers#ft#python#PylintEntryProcess')
