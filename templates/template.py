@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2012-2016 TightVideo Ltd.
+# Copyright (c) 2012-2017 TightVideo Ltd.
 
 import argparse
 import logging
