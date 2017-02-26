@@ -50,8 +50,7 @@ endfunction
 
 
 function! LightlineFilename()
-  return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-       \ ('' != expand('%:t') ? expand('%:t') : '[No Name]') .
+  return ('' != expand('%:t') ? expand('%:t') : '[No Name]') .
        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
@@ -69,6 +68,7 @@ augroup AutoNeomake
   autocmd!
   autocmd BufWritePost *.py,*.go call s:neomake()
 augroup END
+
 function! s:neomake()
   Neomake
   call lightline#update()
@@ -79,3 +79,29 @@ function! TagbarStatusFunc(current, sort, fname, ...) abort
     let g:lightline.fname = a:fname
   return lightline#statusline(0)
 endfunction
+
+
+function! FoldContext()
+    augroup pythonFold
+        autocmd BufReadPre *.py setlocal foldmethod=indent
+        autocmd BufReadPost *.py wincmd s | wincmd k | resize 3 | wincmd j
+        autocmd CursorMovedI *.py call PinFold()
+        autocmd CursorMoved *.py call PinFold()
+    augroup END
+endfunction
+
+
+function! PinFold()
+    let saveCursor =  getcurpos()
+    " Go to upper split, open all folds and go to the same line as bottom split
+    wincmd k
+    normal! zR
+    execute "normal! " . saveCursor[1] . "G"
+    " Go to the beginning of the fold and put the line top of the upper split
+    normal! [zk
+    normal! zt
+    " Go back to bottom split and restore position
+    wincmd j
+    call setpos('.', saveCursor)
+endfunction
+

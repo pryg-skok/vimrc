@@ -19,7 +19,7 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'itchyny/lightline.vim'
 
 " Navigate through functions, methods, etc
-    Plug 'https://github.com/majutsushi/tagbar', {'on': 'TagbarToggle'}
+    Plug 'https://github.com/majutsushi/tagbar'
 
     " Gruvbox Colorscheme
     Plug 'kunev/gruvbox'
@@ -35,6 +35,8 @@ call plug#begin('$HOME/.vim/plugged')
 
     " RegExp search
     Plug 'https://github.com/rking/ag.vim'
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+    Plug 'junegunn/fzf.vim'
 
 " HTML/HAML
     " HTML5 omnicomplete and syntax
@@ -320,7 +322,7 @@ let mapleader = ","
     nnoremap <C-]> :TagbarToggle<CR>
 
 " UndoTree ,t
-    nnoremap <leader>t :UndotreeToggle<CR>
+    nnoremap <leader>[ :UndotreeToggle<CR>
 
 " GitGutter ,g
     nnoremap <leader>g :GitGutterToggle<CR>
@@ -611,7 +613,7 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
       \   'left': [ ['mode', 'paste'], ['fugitive', 'readonly', 'filename'] ],
       \   'right': [
       \       ['neomake', 'lineinfo'],
-      \       ['percent'], ['fileencoding', 'filetype']
+      \       ['percent'], ['context', 'tagbar', 'fileencoding', 'filetype']
       \   ]
       \ },
       \ 'component_function': {
@@ -619,7 +621,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
       \   'readonly': 'LightlineReadonly',
       \   'modified': 'LightlineModified',
       \   'filename': 'LightlineFilename',
+      \   'context': 'LightlineContext',
       \   'neomake': 'neomake#statusline#LoclistStatus'
+      \ },
+      \ 'component': {
+      \   'tagbar': '%{tagbar#currenttag("%s", "", "f")}',
       \ },
       \ 'component_type': {
       \   'neomake': 'error',
@@ -656,4 +662,3 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
     if has('nvim') && has('python3')
         let g:deoplete#enable_at_startup = 1
     endif
-
