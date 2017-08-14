@@ -22,7 +22,8 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/majutsushi/tagbar'
 
     " Gruvbox Colorscheme
-    Plug 'kunev/gruvbox'
+    " Plug 'kunev/gruvbox'
+    Plug 'pryg-skok/vim-monochrome'
 
     " A tree explorer plugin
     Plug 'https://github.com/scrooloose/nerdtree.git', { 'on': 'NERDTreeToggle' }
@@ -207,7 +208,7 @@ endif
     if !has('nvim')
         set ttyscroll=0
     endif
-    set synmaxcol=300
+    set synmaxcol=200
     set regexpengine=1
     set norelativenumber
     syntax sync minlines=256
@@ -529,16 +530,38 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " Plugins
 
 " Colorscheme
+
     set background=dark
-    let g:gruvbox_contrast_dark="hard"
-    let g:gruvbox_contrast_light="hard"
+    " let g:gruvbox_contrast_dark="hard"
+    " let g:gruvbox_contrast_light="hard"
 
     try
-        colorscheme gruvbox
+        " colorscheme gruvbox
+        colorscheme monochrome
     catch /^Vim\%((\a\+)\)\=:E185/
-        echo "Gruvbox theme not found. Run :PlugInstall"
+        echo "Monochrome theme not found. Run :PlugInstall"
     endtry
 
+
+" NERDTress File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+ exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+ exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 
 " NERDTree
     nmap <Bs> :NERDTreeToggle<CR>
