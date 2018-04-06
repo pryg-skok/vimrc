@@ -21,7 +21,7 @@ call plug#begin('$HOME/.vim/plugged')
 " Navigate through functions, methods, etc
     Plug 'https://github.com/majutsushi/tagbar'
 
-    " Gruvbox Colorscheme
+"  Colorscheme
     " Plug 'kunev/gruvbox'
     Plug 'pryg-skok/vim-monochrome'
 
@@ -35,25 +35,20 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/vim-scripts/IndexedSearch.git'
 
     " RegExp search
-    Plug 'https://github.com/rking/ag.vim'
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
 
-" HTML/HAML
+" HTML
     " HTML5 omnicomplete and syntax
     Plug 'https://github.com/othree/html5.vim.git'
-    Plug 'https://github.com/hokaccha/vim-html5validator.git'
     " Runtime files for Haml and Sass
     Plug 'https://github.com/tpope/vim-haml.git'
     Plug 'https://github.com/gregsexton/MatchTag.git'
 
-" CSS/LESS
     " CSS3 syntax support
     Plug 'https://github.com/hail2u/vim-css3-syntax.git'
     " Highlight colors in css files
     Plug 'https://github.com/ap/vim-css-color.git'
-    Plug 'https://github.com/groenewege/vim-less.git'
-    Plug 'https://github.com/miripiruni/vim-better-css-indent.git'
     Plug 'https://github.com/miripiruni/CSScomb-for-Vim.git'
 
 " JavaScript
@@ -61,10 +56,7 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/pangloss/vim-javascript.git'
     " Syntax for jQuery keywords and css selectors
     Plug 'https://github.com/itspriddle/vim-jquery.git'
-
-" CoffeeScript support
-    Plug 'https://github.com/kchmck/vim-coffee-script.git'
-    Plug 'https://github.com/walm/jshint.vim.git'
+    Plug 'posva/vim-vue'
 
 " Python
     Plug 'pryg-skok/jedi-vim'
@@ -78,7 +70,6 @@ call plug#begin('$HOME/.vim/plugged')
 " Syntax highlightnings other
     Plug 'https://github.com/jamestomasino/actionscript-vim-bundle.git'
     Plug 'https://github.com/godlygeek/tabular'
-    Plug 'https://github.com/rust-lang/rust.vim'
     Plug 'https://github.com/cespare/vim-toml'
     Plug 'https://github.com/leshill/vim-json.git'
     Plug 'lervag/vimtex'
@@ -87,7 +78,6 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/ajh17/VimCompletesMe'
 
 " Syntax check
-    "Plug 'scrooloose/Syntastic'
     Plug 'neomake/neomake'
 
 " Git diff quickly
@@ -97,16 +87,17 @@ call plug#begin('$HOME/.vim/plugged')
 " yanc selection to clipboard
     Plug 'https://github.com/ahw/vim-pbcopy'
 
+" marks
     Plug 'kshenoy/vim-signature'
 
 " Other
     Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
-    Plug 'easymotion/vim-easymotion'
     if has('nvim') && has('python3')
         Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     endif
 
-    " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer', 'on': ['YcmCompleter'] }
+    Plug 'rust-lang/rust.vim'
+
 
 call plug#end()
 
@@ -215,6 +206,9 @@ endif
 
     set autochdir
 
+
+" hide tmux statusline if vim open
+" autocmd VimEnter,VimLeave * silent !tmux set status
 
 " No beeps, no flashes
 set visualbell
@@ -476,14 +470,6 @@ set history=500
     silent! call functions#MakeDirIfNoExists(&directory)
 
 
-" AutoReload .vimrc
-" See http://vimcasts.org/episodes/updating-your-vimrc-file-on-the-fly/
-" Source the vimrc file after saving it
-if has("autocmd")
-    autocmd! BufWritePost .vimrc source $MYVIMRC
-endif
-
-
 " Go to last file(s) if invoked without arguments
      "http://vimcastsim.wikia.com/wiki/Open_the_last_edited_file
      autocmd VimLeave * nested if (!isdirectory($HOME . "/.vim")) |
@@ -510,7 +496,6 @@ autocmd VimResized * :wincmd =
 
 " File specific
 autocmd BufNewFile *.py 0r $HOME/.vim/templates/template.py
-autocmd BufNewFile *.go 0r $HOME/.vim/templates/template.go
 autocmd BufNewFile *.c 0r $HOME/.vim/templates/template.c
 autocmd BufNewFile *.cpp 0r $HOME/.vim/templates/template.cpp
 autocmd BufNewFile *.html 0r $HOME/.vim/templates/template.html
@@ -530,11 +515,9 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " Plugins
 
 " Colorscheme
-
     set background=dark
     " let g:gruvbox_contrast_dark="hard"
     " let g:gruvbox_contrast_light="hard"
-
     try
         " colorscheme gruvbox
         colorscheme monochrome
@@ -590,6 +573,8 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
     " let g:neomake_logfile=$HOME . '/neomake.log'
 
     let g:neomake_python_enabled_makers = ['pylint', 'flake8']
+    " let g:neomake_python_pylint_exe = 'python'
+    " let g:neomake_python_flake8_exe = 'python'
     let g:neomake_python_pylint_maker = {
       \ 'args': [
       \    '--output-format=text',
@@ -618,6 +603,11 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
     let g:gitgutter_enabled = 0
     let g:gitgutter_realtime = 0
     let g:gitgutter_eager = 0
+    let g:gitgutter_sign_added = '.'
+    let g:gitgutter_sign_modified = '.'
+    let g:gitgutter_sign_removed = '.'
+    let g:gitgutter_sign_removed_firrt_line = '.'
+    let g:gitgutter_sign_modified_removed = '.'
 
 " TagBar autofocus when open
     let g:tagbar_autofocus = 1
@@ -654,7 +644,6 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
       \   'neomake': 'error',
       \ },
       \ }
-
     let g:tagbar_status_func = 'TagbarStatusFunc'
 
 " vim-jedi
@@ -681,7 +670,10 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 
 " vimtex
     let g:vimtex_latexmk_enabled = 0
-
     if has('nvim') && has('python3')
         let g:deoplete#enable_at_startup = 1
     endif
+
+" rust
+    let g:rustfmt_autosave = 1
+    let g:rust_clip_command = 'pbcopy'
