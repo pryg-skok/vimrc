@@ -22,8 +22,8 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/majutsushi/tagbar'
 
 "  Colorscheme
-    " Plug 'kunev/gruvbox'
-    Plug 'pryg-skok/vim-monochrome'
+    Plug 'morhetz/gruvbox'
+    " Plug 'pryg-skok/vim-monochrome'
 
     " A tree explorer plugin
     Plug 'https://github.com/scrooloose/nerdtree.git', { 'on': 'NERDTreeToggle' }
@@ -78,11 +78,11 @@ call plug#begin('$HOME/.vim/plugged')
     Plug 'https://github.com/ajh17/VimCompletesMe'
 
 " Syntax check
-    Plug 'neomake/neomake'
+    Plug 'w0rp/ale'
+    Plug 'maximbaz/lightline-ale'
 
 " Git diff quickly
     Plug 'https://github.com/airblade/vim-gitgutter', {'on': 'GitGutterToggle'}
-    Plug 'https://github.com/tpope/vim-fugitive'
 
 " yanc selection to clipboard
     Plug 'https://github.com/ahw/vim-pbcopy'
@@ -97,6 +97,16 @@ call plug#begin('$HOME/.vim/plugged')
     endif
 
     Plug 'rust-lang/rust.vim'
+
+    Plug 'justmao945/vim-clang'
+
+    Plug 'Chiel92/vim-autoformat'
+
+    Plug 'nazo/pt.vim'
+
+    Plug 'junegunn/goyo.vim'
+
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 
 call plug#end()
@@ -151,6 +161,7 @@ endif
     set wrap
     " Don't break words when wrapping
     " Only available when compiled with the +linebreak feature
+    set updatetime=500
 
     set linebreak
     " Show ↪ at the beginning of wrapped lines
@@ -302,8 +313,8 @@ let mapleader = ","
 " ,f
     " Fast grep
     " Recursive search in current directory for matches with current word
-    nnoremap <leader>a :Ag<space>
-    map <Leader>f :execute "Ag " . expand("<cword>") <Bar> cw<CR>
+    " nnoremap <leader>a :Ag<space>
+    map <Leader>f :execute "Pt " . expand("<cword>") <Bar> cw<CR>
 
 " ,s
     " Shortcut for :%s//
@@ -319,8 +330,8 @@ let mapleader = ","
 " UndoTree ,t
     nnoremap <leader>[ :UndotreeToggle<CR>
 
-" GitGutter ,g
-    nnoremap <leader>g :GitGutterToggle<CR>
+" Goyo ,g
+    nnoremap <leader>g :Goyo<CR>
 
 " Navigate with <Ctrl>-hjkl in Insert mode
     imap <C-h> <C-o>h
@@ -516,11 +527,11 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 
 " Colorscheme
     set background=dark
-    " let g:gruvbox_contrast_dark="hard"
-    " let g:gruvbox_contrast_light="hard"
+    let g:gruvbox_contrast_dark="hard"
+    let g:gruvbox_contrast_light="hard"
     try
-        " colorscheme gruvbox
-        colorscheme monochrome
+        colorscheme gruvbox
+        " colorscheme monochrome
     catch /^Vim\%((\a\+)\)\=:E185/
         echo "Monochrome theme not found. Run :PlugInstall"
     endtry
@@ -564,39 +575,25 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 " Python Syntax
     let python_highlight_all = 1
 
-" Neomake
-    let g:neomake_warning_sign = {'text': 'W>', 'texthl': 'WarnMsg'}
-    let g:neomake_error_sign = {'text': 'E>', 'texthl': 'ErrorMsg'}
-    let g:neomake_info_sign = {'text': 'I>', 'texthl': 'InfoMsg'}
+" ale
+    let g:ale_completion_enabled = 1
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_lint_on_enter = 0
 
-    " let g:neomake_verbose = 1
-    " let g:neomake_logfile=$HOME . '/neomake.log'
+    let g:ale_sign_error = 'E>'
+    let g:ale_sign_warning = 'W>'
 
-    let g:neomake_python_enabled_makers = ['pylint', 'flake8']
-    " let g:neomake_python_pylint_exe = 'python'
-    " let g:neomake_python_flake8_exe = 'python'
-    let g:neomake_python_pylint_maker = {
-      \ 'args': [
-      \    '--output-format=text',
-      \    '--msg-template="{path}:{line}:{column}:{C}: [{symbol}] {msg}"',
-      \    '--reports=no',
-      \    '--disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330,E0237'
-      \ ],
-      \ 'errorformat': neomake#makers#ft#python#pylint()['errorformat'],
-      \ 'postprocess': function('neomake#makers#ft#python#PylintEntryProcess')
-      \ }
+    " let g:ale_echo_msg_format = '[%linter%] %s'
 
-    let g:neomake_python_flake8_maker = {
-      \ 'args': [
-      \    '--max-line-length=120',
-      \    '--max-complexity=12',
-      \    '--ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202,F405,F403'
-      \ ],
-      \ 'errorformat': neomake#makers#ft#python#flake8()['errorformat'],
-      \ 'postprocess': function('neomake#makers#ft#python#Flake8EntryProcess')
-      \ }
+    let g:ale_python_pylint_options = '--output-format=text --msg-template="{path}:{line}:{column}:{C}: [{symbol}] {msg}" --reports=no --disable=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,W1202,R0904,E1103,E1101,C0330,E0237,E722'
+    let g:ale_python_flake8_options = '--max-line-length=120 --max-complexity=12 --ignore=C0103,C0321,C0111,C0326,C0302,W1401,W0602,W0105,W0401,W0621,W0702,W0403,W0511,W1201,W0232,W0142,W0603,W0703,R0904,E1103,E1101,C0330,E402,E241,E116,E265,E125,W1202,F405,F403,E722'
 
-    set completeopt-=preview
+highlight ALEWarningSign ctermfg=Yellow
+highlight ALEErrorSign ctermfg=Red
+
+    nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+    nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
 
 " gitgutter
     let g:gitgutter_max_signs = 1000
@@ -621,11 +618,13 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
     execute 'source ' . g:vimrc_path . "/lightline.vim"
 
 "LightLine
+
     let g:lightline = {
       \ 'active': {
       \   'left': [ ['mode', 'paste'], ['fugitive', 'readonly', 'filename'] ],
       \   'right': [
-      \       ['neomake', 'lineinfo'],
+      \       ['lineinfo'],
+      \       ['linter_checking', 'linter_errors', 'linter_warnings'],
       \       ['percent'], ['context', 'tagbar', 'fileencoding', 'filetype']
       \   ]
       \ },
@@ -634,16 +633,30 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
       \   'readonly': 'LightlineReadonly',
       \   'modified': 'LightlineModified',
       \   'filename': 'LightlineFilename',
-      \   'context': 'LightlineContext',
-      \   'neomake': 'neomake#statusline#LoclistStatus'
+      \   'context': 'LightlineContext'
       \ },
       \ 'component': {
       \   'tagbar': '%{tagbar#currenttag("%s", "", "f")}',
       \ },
-      \ 'component_type': {
-      \   'neomake': 'error',
-      \ },
       \ }
+
+    let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+
+    let g:lightline.component_type = {
+      \     'linter_checking': 'left',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'left',
+      \ }
+
+    let g:lightline#ale#indicator_checking = "*"
+
+
     let g:tagbar_status_func = 'TagbarStatusFunc'
 
 " vim-jedi
@@ -668,12 +681,36 @@ call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 " remote pbcopy
     let g:vim_pbcopy_remote_cmd = "ssh fresh@10.211.55.2 pbcopy"
 
-" vimtex
-    let g:vimtex_latexmk_enabled = 0
-    if has('nvim') && has('python3')
-        let g:deoplete#enable_at_startup = 1
-    endif
-
 " rust
     let g:rustfmt_autosave = 1
     let g:rust_clip_command = 'pbcopy'
+
+    let g:clang_c_options = '-std=gnu11'
+    let g:clang_cpp_options = '-std=c++11 -stdlib=libc++'
+
+" Goyo
+    let g:goyo_width = 80
+    let g:goyo_height = "100%"
+
+    function! s:goyo_enter()
+        let b:quitting = 0
+        let b:quitting_bang = 0
+        autocmd QuitPre <buffer> let b:quitting = 1
+        cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+    endfunction
+
+    function! s:goyo_leave()
+        " Quit Vim if this is the only remaining buffer
+        if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+            if b:quitting_bang
+            qa!
+            else
+            qa
+            endif
+        endif
+    endfunction
+
+    autocmd! User GoyoEnter call <SID>goyo_enter()
+    autocmd! User GoyoLeave call <SID>goyo_leave()
+
+

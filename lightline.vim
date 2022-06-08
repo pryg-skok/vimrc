@@ -64,15 +64,15 @@ function! LightlineMode()
 endfunction
 
 
-augroup AutoNeomake
-  autocmd!
-  autocmd BufWritePost *.py,*.go call s:neomake()
-augroup END
+" augroup AutoNeomake
+  " autocmd!
+  " autocmd BufWritePost *.py,*.go call s:neomake()
+" augroup END
 
-function! s:neomake()
-  Neomake
-  call lightline#update()
-endfunction
+" function! s:neomake()
+  " Neomake
+  " call lightline#update()
+" endfunction
 
 
 function! TagbarStatusFunc(current, sort, fname, ...) abort
